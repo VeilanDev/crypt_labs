@@ -1,3 +1,7 @@
+import os
+
+directory = "C:\\Vigileaf\\Vogu\\crypt_labs\\laba1\\"
+
 alph = "abcdefghigklmnopqrstuvwxyz"
 ALPH = "ABCDEFGHIGKLMNOPQRSTUVWXYZ"
 
@@ -11,14 +15,23 @@ while 1:
         elif int(action) == 2:
             print("Расшифровать")
             break
-
-text = str(input("Введите текст: "))
-code = int(input("Вветите сдвиг: "))
-text = text.strip()
-
-cryptText = ""
 act = int(action)
-if act == 1:
+
+fileName = str(input("\nВведите название текстового файла из этой директории (./laba1/)\n(напиример text.txt): "))
+pFile = directory + fileName
+if (os.path.exists(pFile)):
+    pass
+else:
+    print("файл не найден (некоректне имя файла или файла не существует)")
+    exit()
+
+code = int(input("Вветите сдвиг: "))
+
+# print(file)
+# text = file.read()
+
+def crypt(text):
+    cryptText = ""
     for i in range(len(text)):
         if text[i].islower():
             sim = abs(ord(text[i]) + code)
@@ -36,7 +49,10 @@ if act == 1:
             sim = ord(text[i]) + code
             #print(text[i], " (", ord(text[i]), ")", "->", chr(sim), " (", sim, ")")
             cryptText = cryptText + chr(sim)
-elif act == 2:
+    return cryptText
+
+def encrypt(text):
+    cryptText = ""
     for i in range(len(text)):
         if text[i].islower():
             sim = abs(ord(text[i]) - code)
@@ -54,7 +70,22 @@ elif act == 2:
             sim = ord(text[i]) - code
             #print(text[i], " (", ord(text[i]), ")", "->", chr(sim), " (", sim, ")")
             cryptText = cryptText + chr(sim)
+    return cryptText
 
-print(text)
-text = cryptText
-print(text)
+def open_file(filename):
+    tempFilename = filename + ".tmp"
+    with open(directory + filename, "r") as readFile, open(directory + tempFilename, "w") as writefile:
+        for lineNum, line in enumerate(readFile, 1):
+            originLine = line.rstrip("\n")
+            if act == 1:
+                cryptLine = crypt(originLine)
+            elif act == 2:
+                cryptLine = encrypt(originLine)
+            else:
+                return "Ошибка выбора режима"
+            writefile.write(cryptLine + "\n")
+    os.remove(directory + filename)
+    os.rename(directory + tempFilename, directory + filename)
+    print("Файл успешно зашифрован/расшифрован")
+
+open_file(fileName)
